@@ -1,5 +1,6 @@
 ##TTT Loadout Manager
 =====================
+
 ###A loadout manager for TTT (a Garry's Mod game mode)
 
 This addon adds the ability for players to have individual loadouts.
