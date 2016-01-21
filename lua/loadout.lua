@@ -176,6 +176,7 @@ end
 
 local function onRoundStart()
     for _, player in pairs(player.GetAll()) do
+        --TODO: Add ULib check for access to command
         Msg("[LOADOUT MGR] Loading loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ")!\n")
 
         -- Load weapons
