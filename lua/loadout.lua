@@ -38,6 +38,8 @@ LoadoutMgr.manager = function(calling_player, arg2, arg3)
         LoadoutMgr.setWeaponPrimary(calling_player, arg3)
     end
 
+    -- TODO: Fix saving
+    -- TODO: Add GUI (later revision)
     if (arg2 == "secondary") then
         if (not LoadoutMgr.checkSecondaryWeapon(arg3) or arg3 == "") then
             ULib.tsayError(calling_player, "Invalid secondary weapon \"" .. arg3 .. "\"")
@@ -103,10 +105,12 @@ LoadoutMgr.printLoadout = function(calling_player)
 end
 
 LoadoutMgr.checkPrimaryWeapon = function(weapon)
+    --TODO: Add weapon filtering
     return true
 end
 
 LoadoutMgr.checkSecondaryWeapon = function(weapon)
+    --TODO: Add weapon filtering
     return true
 end
 
@@ -181,6 +185,7 @@ local function onRoundStart()
 
         -- Check primary weapon against filter
         if (wep_primary ~= nil) then
+            --TODO: Refactor to equipWeapon that does the checks
             if LoadoutMgr.checkPrimaryWeapon(wep_primary) and shouldEquipWeapon(player, LoadoutMgr.WEAPON_PRIMARY, shouldOverride) then
                 player:Give(wep_primary)
             end
