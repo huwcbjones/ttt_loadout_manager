@@ -1,5 +1,4 @@
 ##TTT Loadout Manager
-=====================
 
 ###A loadout manager for TTT (a Garry's Mod game mode)
 
