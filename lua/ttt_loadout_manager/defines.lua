@@ -18,5 +18,6 @@ LoadoutMgr.validCommands = {
     ["secondary"] = "secondary",
     ["override"] = "override",
     ["reset"] = "reset",
-    ["help"] = "help"
+    ["help"] = "help",
+    ["weapons"] = "weapons"
 }
