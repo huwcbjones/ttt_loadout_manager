@@ -6,7 +6,6 @@
 --
 
 local CATAGORY_NAME = "Loadout"
-local gamemode_error = "TTT is required to use this addon!"
 
 local loadout = ulx.command(CATAGORY_NAME, "ulx loadout", LoadoutMgr.manager, "!loadout", true)
 loadout:defaultAccess( ULib.ACCESS_ADMIN )
