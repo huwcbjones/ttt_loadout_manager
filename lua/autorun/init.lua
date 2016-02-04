@@ -31,31 +31,13 @@ local function loadConfig()
     include("ttt_loadout_manager/config.lua")
 end
 
-local function loadPrimaryWeapons()
-    local weaponList = weapons.GetList()
-    for i = 1, #weaponList do
-        Msg("[LOADOUT MGR] - " .. LoadoutMgr.Weapons.Primary[i] .. "\n")
-    end
-    for i = 1, #weaponList do
-        local w = weaponList[i]
-        if not w.Kind == WEAPON_HEAVY then return end
-        table.insert(LoadoutMgr.Weapons.Primary, w)
-    end
-end
-
 if not LoadoutMgr then
     LoadoutMgr = {}
     include ( "ttt_loadout_manager/defines.lua" )
     loadDefaultConfig()
     loadConfig()
-    loadPrimaryWeapons()
 
     Msg("[LOADOUT MGR] Loaded Loadout Manager\n")
-    Msg("[LOADOUT MGR] Available Primary Weapons: \n")
-    PrintTable(LoadoutMgr.Weapons.Primary)
-    for i = 1, #LoadoutMgr.Weapons.Primary do
-        Msg("[LOADOUT MGR] - " .. LoadoutMgr.Weapons.Primary[i] .. "\n")
-    end
 
     include("ttt_loadout_manager/loadout.lua")
 end
