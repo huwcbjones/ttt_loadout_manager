@@ -57,6 +57,9 @@ LoadoutMgr.manager = function(calling_player, arg2, arg3)
         if arg3 == "" then arg3 = nil end
         LoadoutMgr.setWeaponOverride(calling_player, arg3)
     end
+    if (arg2 == "weapons") then
+        LoadoutMgr.printWeapons(calling_player, arg3)
+    end
 end
 
 LoadoutMgr.displayHelp = function(calling_player, command)
@@ -77,6 +80,12 @@ LoadoutMgr.displayHelp = function(calling_player, command)
         ULib.tsayColor(calling_player, false, "!loadout override [true/false], sets whether your current weapons will be replaced when your loadout is equipped")
         return
     end
+
+    if (command == "weapons") then
+        ULib.tsayColor(calling_player, false, "!loadout weapons [primary/secondary], displays a list of available [primary/secondary] weapons")
+        return
+    end
+
     local cmds = ""
     local i = 1
     for _, v in pairs(LoadoutMgr.validCommands) do
@@ -102,6 +111,42 @@ LoadoutMgr.printLoadout = function(calling_player)
     ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Current Loadout ==")
     ULib.tsayColor(calling_player, false, Color(0, 255, 255), "Primary: " .. primary)
     ULib.tsayColor(calling_player, false, Color(0, 192, 255), "Secondary: " .. secondary)
+    ULib.tsayColor(calling_player, false, Color(0, 128, 255), "Override: " .. override)
+end
+
+LoadoutMgr.printWeapons = function(calling_player, type)
+    LoadoutMgr.getWeaponList()
+
+    if (type == "primary") then
+        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Primary Weapons ==")
+        for weapon_key, weapon in pairs(LoadoutMgr.Weapons.Primary) do
+            ULib.tsayColor(calling_player, false, Color(0, 255, 255), weapon_key)
+        end
+    end
+
+    if (type == "secondary") then
+        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Secondary Weapons ==")
+        for weapon_key, weapon in pairs(LoadoutMgr.Weapons.Secondary) do
+            ULib.tsayColor(calling_player, false, Color(0, 255, 255), weapon_key)
+        end
+    end
+end
+
+LoadoutMgr.getWeaponList = function()
+    local weaponList = weapons.GetList()
+    local weapon
+    for i = 1, #weaponList do
+        weapon = weaponList[i]
+        if (weapon.Kind == WEAPON_HEAVY) then
+            if (LoadoutMgr.checkPrimaryWeapon(weapon.ClassName)) then
+                LoadoutMgr.Weapons.Primary[weapon.ClassName] = weapon
+            end
+        elseif (weapon.Kind == WEAPON_PISTOL) then
+            if (LoadoutMgr.checkSecondaryWeapon(weapon.ClassName)) then
+                LoadoutMgr.Weapons.Secondary[weapon.ClassName] = weapon
+            end
+        end
+    end
 end
 
 LoadoutMgr.checkPrimaryWeapon = function(weapon)
@@ -148,8 +193,8 @@ LoadoutMgr.setWeaponOverride = function(player, state)
     player:SetPData("loadoutMgr_weapon_override", state)
 end
 
-local function shouldEquipWeapon(player, type, shouldOverride)
-    local hasWeapon = false
+local function processEquipWeapon(player, type, shouldOverride, loadoutWeapon)
+    local shouldEquip = true
     local playerWeapons = player:GetWeapons()
 
     -- Loop through player's weapons
@@ -159,24 +204,25 @@ local function shouldEquipWeapon(player, type, shouldOverride)
         -- If the player's weapon is in the slot we are looking at, handle accordingly
         if weapon:GetSlot() == type then
             if shouldOverride then
-
-                -- If the player wants their current weapons overrode, then strip the weapon
-                player:StripWeapon(weapon)
+                player:StripWeapon(weapon:GetClass())
             else
-
                 -- We don't want to override the existing weapon
-                hasWeapon = true
+                shouldEquip = false
             end
         end
     end
 
-    -- Return not hasWeapon
-    return not hasWeapon
+    if shouldEquip then
+        player:Give(loadoutWeapon)
+    end
 end
 
 local function onRoundStart()
     for _, player in pairs(player.GetAll()) do
-        --TODO: Add ULib check for access to command
+        if (not ucl.query(player, "ulx loadout", true)) then
+            return
+        end
+        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "[LOADOUT MGR] Loading your loadout...")
         Msg("[LOADOUT MGR] Loading loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ")!\n")
 
         -- Load weapons
@@ -187,18 +233,27 @@ local function onRoundStart()
         -- Check primary weapon against filter
         if (wep_primary ~= nil) then
             --TODO: Refactor to equipWeapon that does the checks
-            if LoadoutMgr.checkPrimaryWeapon(wep_primary) and shouldEquipWeapon(player, LoadoutMgr.WEAPON_PRIMARY, shouldOverride) then
-                player:Give(wep_primary)
+            if LoadoutMgr.checkPrimaryWeapon(wep_primary) then
+                processEquipWeapon(player, LoadoutMgr.WEAPON_PRIMARY, shouldOverride, wep_primary)
+            else
+                ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Current Loadout ==")
             end
         end
 
         -- Check secondary weapon against filter
         if (wep_secondary ~= nil) then
-            if LoadoutMgr.checkSecondaryWeapon(wep_secondary) and shouldEquipWeapon(player, LoadoutMgr.WEAPON_SECONDARY, shouldOverride) then
-                player:Give(wep_secondary)
+            if LoadoutMgr.checkSecondaryWeapon(wep_secondary) then
+                processEquipWeapon(player, LoadoutMgr.WEAPON_SECONDARY, shouldOverride, wep_secondary)
+            else
+                ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Current Loadout ==")
             end
         end
     end
 end
 
+local function onPreparing()
+    LoadoutMgr.getWeaponList()
+end
+
 hook.Add("TTTBeginRound", "LoadoutMgr_roundStart", onRoundStart)
+hook.Add("TTTPrepareRound", "LoadoutMgr_prepareRound", onPreparing)
