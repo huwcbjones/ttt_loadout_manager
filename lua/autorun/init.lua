@@ -27,8 +27,8 @@ end
 -- Loads config
 --
 local function loadConfig()
-    if not file.Exists("config.lua", "LUA") then return end
-    include("config.lua")
+    if not file.Exists("ttt_loadout_manager/config.lua", "LUA") then return end
+    include("ttt_loadout_manager/config.lua")
 end
 
 local function loadPrimaryWeapons()
@@ -45,7 +45,7 @@ end
 
 if not LoadoutMgr then
     LoadoutMgr = {}
-    include ( "defines.lua" )
+    include ( "ttt_loadout_manager/defines.lua" )
     loadDefaultConfig()
     loadConfig()
     loadPrimaryWeapons()
@@ -57,5 +57,5 @@ if not LoadoutMgr then
         Msg("[LOADOUT MGR] - " .. LoadoutMgr.Weapons.Primary[i] .. "\n")
     end
 
-    include("loadout.lua")
+    include("ttt_loadout_manager/loadout.lua")
 end
