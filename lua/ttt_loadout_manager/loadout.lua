@@ -149,12 +149,10 @@ LoadoutMgr.printLoadout = function(calling_player)
     local primary = LoadoutMgr.getWeaponPrimary(calling_player)
     local secondary = LoadoutMgr.getWeaponSecondary(calling_player)
     local override = LoadoutMgr.getWeaponOverride(calling_player)
-    local override_str = ""
+    local override_str = "Disabled"
 
     if override then
         override_str = "Enabled"
-    else
-        override_str = "Disabled"
     end
 
     primary = LoadoutMgr.convertWeaponToString(primary)
@@ -176,7 +174,7 @@ LoadoutMgr.printWeapons = function(calling_player, type)
     if (type == "primary") then
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Primary Weapons ==")
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
-        for weapon_key, weapon in pairs(LoadoutMgr.Weapons.Primary) do
+        for weapon_key, _ in pairs(LoadoutMgr.Weapons.Primary) do
             ULib.tsayColor(calling_player, false, Color(0, 255, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
         end
         return
@@ -185,7 +183,7 @@ LoadoutMgr.printWeapons = function(calling_player, type)
     if (type == "secondary") then
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Secondary Weapons ==")
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
-        for weapon_key, weapon in pairs(LoadoutMgr.Weapons.Secondary) do
+        for weapon_key, _ in pairs(LoadoutMgr.Weapons.Secondary) do
             ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
         end
         return
@@ -335,7 +333,7 @@ if SERVER then
         -- Loop through player's weapons
         local activeSlot = player:GetActiveWeapon().Kind
 
-        for k, weapon in pairs(playerWeapons) do
+        for _, weapon in pairs(playerWeapons) do
             -- If the player's weapon is in the slot we are looking at, handle accordingly
             if weapon.Kind == type then
                 Msg(weapon.ClassName)
