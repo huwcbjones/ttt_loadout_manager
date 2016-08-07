@@ -19,10 +19,12 @@ local function loadDefaultConfig()
     LoadoutMgr.Weapons.Filter.Primary = {}
     LoadoutMgr.Weapons.Filter.Primary.Type = LoadoutMgr.FILTER_NONE
     LoadoutMgr.Weapons.Filter.Primary.Value = ""
+    LoadoutMgr.Weapons.Filter.Primary.Table = {}
 
     LoadoutMgr.Weapons.Filter.Secondary = {}
     LoadoutMgr.Weapons.Filter.Secondary.Type = LoadoutMgr.FILTER_NONE
     LoadoutMgr.Weapons.Filter.Secondary.Value = ""
+    LoadoutMgr.Weapons.Filter.Secondary.Table = {}
 end
 
 --
@@ -31,6 +33,9 @@ end
 local function loadConfig()
     if not file.Exists("ttt_loadout_manager/config.lua", "LUA") then return end
     include("ttt_loadout_manager/config.lua")
+    include("csvutils.lua")
+    LoadoutMgr.Weapons.Filter.Primary.Table = fromCSV(LoadoutMgr.Weapons.Filter.Primary.Value)
+    LoadoutMgr.Weapons.Filter.Secondary.Table = fromCSV(LoadoutMgr.Weapons.Filter.Secondary.Value)
 end
 
 local function loadWeaponNameMap()

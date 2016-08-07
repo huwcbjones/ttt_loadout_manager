@@ -223,9 +223,20 @@ end
 -- @param weapon String, weapon ID string
 -- @return boolean  True if the weapon is allowed, false if it is not
 LoadoutMgr.checkPrimaryWeaponFilter = function(weapon)
-    --TODO: Add weapon filtering
+    if (LoadoutMgr.Weapons.Filter.Primary.Type == LoadoutMgr.FILTER_NONE) then
+        return true
+    end
 
-    return true
+    -- Work out whether the weapon is in the filter list
+    local isInList = false
+    for _, k in pairs(LoadoutMgr.Weapons.Filter.Primary.Table) do
+        -- isInList ^= (weapon == k)
+        isInList = isInList or (weapon == k)
+    end
+
+    return
+    (isInList and LoadoutMgr.Weapons.Filter.Primary.Type == LoadoutMgr.FILTER_WHITELIST)
+            or (not isInList and LoadoutMgr.Weapons.Filter.Primary.Type == LoadoutMgr.FILTER_BLACKLIST)
 end
 
 --- Checks is a secondary weapon is allowed
@@ -242,9 +253,20 @@ end
 -- @param weapon String, weapon ID string
 -- @return boolean  True if the weapon is allowed, false if it is not
 LoadoutMgr.checkSecondaryWeaponFilter = function(weapon)
-    --TODO: Add weapon filtering
+    if (LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_NONE) then
+        return true
+    end
 
-    return true
+    -- Work out whether the weapon is in the filter list
+    local isInList = false
+    for _, k in pairs(LoadoutMgr.Weapons.Filter.Secondary.Table) do
+        -- isInList ^= (weapon == k)
+        isInList = isInList or (weapon == k)
+    end
+
+    return
+        (isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_WHITELIST)
+        or (not isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_BLACKLIST)
 end
 
 --- Checks whether the override param meets the criteria
