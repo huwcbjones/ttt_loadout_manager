@@ -38,7 +38,7 @@ local function loadWeaponNameMap()
     if (not file.Exists("data/ttt_loadout_manager/weapon_map.txt", "GAME")) then
         Msg("[LOADOUT MGR] ERROR! Weapon name map not found, copying default map.\n")
         file.CreateDir("ttt_loadout_manager")
-        default_map = file.Read("addons/ttt_loadout_manager/data/weapon_map.txt", "GAME")
+        local default_map = file.Read("addons/ttt_loadout_manager/data/weapon_map.txt", "GAME")
         file.Write("ttt_loadout_manager/weapon_map.txt", default_map)
     end
 
@@ -53,11 +53,9 @@ end
 if not LoadoutMgr then
     LoadoutMgr = {}
     include ( "ttt_loadout_manager/defines.lua" )
-    if not CLIENT then
-        loadDefaultConfig()
-        loadConfig()
-        loadWeaponNameMap()
-    end
+    loadDefaultConfig()
+    loadConfig()
+    loadWeaponNameMap()
 
     Msg("[LOADOUT MGR] Loaded Loadout Manager\n")
 
