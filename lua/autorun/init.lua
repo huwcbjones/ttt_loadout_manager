@@ -8,6 +8,7 @@
 --
 -- Loads default config
 --
+
 local function loadDefaultConfig()
     LoadoutMgr.Weapons = {}
     LoadoutMgr.Weapons.NameMap = {}
@@ -33,21 +34,30 @@ local function loadConfig()
 end
 
 local function loadWeaponNameMap()
-    if (not file.Exists("data/weapon_map.json")) then
-        Msg("[LOADOUT MGR] ERROR! Weapon name map not found!")
+    -- Load weapon name map from file
+    if (not file.Exists("data/ttt_loadout_manager/weapon_map.txt", "GAME")) then
+        Msg("[LOADOUT MGR] ERROR! Weapon name map not found, copying default map.\n")
+        file.CreateDir("ttt_loadout_manager")
+        default_map = file.Read("addons/ttt_loadout_manager/data/weapon_map.txt", "GAME")
+        file.Write("ttt_loadout_manager/weapon_map.txt", default_map)
     end
-    local map = file.Open("weapon_map.json", "r", "DATA")
+
+    local map = file.Read("ttt_loadout_manager/weapon_map.txt", "DATA")
     local table = util.JSONToTable(map)
     if table ~= nil then
         LoadoutMgr.Weapons.NameMap = table
     end
+    Msg("[LOADOUT MGR] Loaded weapon name map!\n")
 end
 
 if not LoadoutMgr then
     LoadoutMgr = {}
     include ( "ttt_loadout_manager/defines.lua" )
-    loadDefaultConfig()
-    loadConfig()
+    if not CLIENT then
+        loadDefaultConfig()
+        loadConfig()
+        loadWeaponNameMap()
+    end
 
     Msg("[LOADOUT MGR] Loaded Loadout Manager\n")
 
