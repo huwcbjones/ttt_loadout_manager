@@ -265,8 +265,8 @@ LoadoutMgr.checkSecondaryWeaponFilter = function(weapon)
     end
 
     return
-        (isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_WHITELIST)
-        or (not isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_BLACKLIST)
+    (isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_WHITELIST)
+            or (not isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_BLACKLIST)
 end
 
 --- Checks whether the override param meets the criteria
@@ -294,7 +294,12 @@ end
 -- @param player Player
 --
 LoadoutMgr.getWeaponPrimary = function(player)
-    return player:GetPData("loadoutMgr_weapon_primary", nil)
+    local weapon = player:GetPData("loadoutMgr_weapon_primary", nil)
+    if (LoadoutMgr.checkPrimaryWeapon(weapon)) then
+        return weapon
+    else
+        return nil
+    end
 end
 
 --- Sets the player's primary weapon
@@ -309,7 +314,12 @@ end
 -- @param player Player
 --
 LoadoutMgr.getWeaponSecondary = function(player)
-    return player:GetPData("loadoutMgr_weapon_secondary", nil)
+    local weapon = player:GetPData("loadoutMgr_weapon_secondary", nil)
+    if (LoadoutMgr.checkSecondaryWeapon(weapon)) then
+        return weapon
+    else
+        return nil
+    end
 end
 
 --- Sets the player's secopndary weapon
