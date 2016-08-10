@@ -18,6 +18,7 @@ LoadoutMgr.manager = function(calling_player, arg2, arg3)
     -- If no arguements specified, display loadout
     if ((arg2 == nil or arg2 == "") and (arg3 == nil or arg3 == "")) then
         LoadoutMgr.printLoadout(calling_player)
+        ULib.tsayError(calling_player, "For help, use !loadout help.")
         return
     end
 
@@ -92,7 +93,7 @@ LoadoutMgr.manager = function(calling_player, arg2, arg3)
             override_str = "Enabled"
         end
 
-        ULib.tsayColor(calling_player, false, Color(0, 128, 255), "Override Weapons: " .. override_str)
+        ULib.tsayColor(calling_player, false, Color(0, 128, 255), "Override: " .. override_str)
     end
 
     -- Display weapons
@@ -106,26 +107,26 @@ end
 -- @param command Command for help
 --
 LoadoutMgr.displayHelp = function(calling_player, command)
-    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Loadout Manager Help: ", Color(255, 192, 0), command)
+    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Loadout Manager Help:", Color(255, 192, 0), " " .. command, Color(255, 0, 0), " ==")
 
     if (command == "primary" or command == "secondary") then
-        ULib.tsayColor(calling_player, false, "!loadout " .. command .. " [weapon]")
-        ULib.tsayColor(calling_player, false, "If weapon is blank, your loadout slot for that weapon will be cleared.")
+        ULib.tsayColor(calling_player, false, Color(0, 192, 255), "!loadout " .. command .. " [weapon]")
+        ULib.tsayColor(calling_player, false, Color(0, 192, 255), "If weapon is blank, your loadout slot for that weapon will be cleared.")
         return
     end
 
     if (command == "reset") then
-        ULib.tsayColor(calling_player, false, "!loadout reset, clears your loadout")
+        ULib.tsayColor(calling_player, false, Color(0, 192, 255), "!loadout reset, clears your loadout")
         return
     end
 
     if (command == "override") then
-        ULib.tsayColor(calling_player, false, "!loadout override [on/off], sets whether your current weapons will be replaced when your loadout is equipped")
+        ULib.tsayColor(calling_player, false, Color(0, 192, 255), "!loadout override [on/off], sets whether your current weapons will be replaced when your loadout is equipped")
         return
     end
 
     if (command == "weapons") then
-        ULib.tsayColor(calling_player, false, "!loadout weapons [primary/secondary], displays a list of available [primary/secondary] weapons")
+        ULib.tsayColor(calling_player, false, Color(0, 192, 255), "!loadout weapons [primary/secondary], displays a list of available [primary/secondary] weapons")
         return
     end
 
@@ -140,6 +141,7 @@ LoadoutMgr.displayHelp = function(calling_player, command)
         i = i + 1
     end
     ULib.tsayColor(calling_player, false, Color(0, 192, 255), "Available commands: " .. cmds)
+    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "For help with a command, use !loadout help [command].")
 end
 
 --- Prints a player's loadout
@@ -158,7 +160,7 @@ LoadoutMgr.printLoadout = function(calling_player)
     primary = LoadoutMgr.convertWeaponToString(primary)
     secondary = LoadoutMgr.convertWeaponToString(secondary)
 
-    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Current Loadout ==")
+    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Loadout Manager: ", Color(255, 192, 0), "Current Loadout", Color(255, 0 ,0), " ==")
     ULib.tsayColor(calling_player, false, Color(0, 255, 255), "Primary: " .. primary)
     ULib.tsayColor(calling_player, false, Color(0, 192, 255), "Secondary: " .. secondary)
     ULib.tsayColor(calling_player, false, Color(0, 128, 255), "Override: " .. override_str)
@@ -184,12 +186,12 @@ LoadoutMgr.printWeapons = function(calling_player, type)
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Secondary Weapons ==")
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
         for weapon_key, _ in pairs(LoadoutMgr.Weapons.Secondary) do
-			local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
-			if (weapon_name ~= nil) then
-				ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
-			else
-				ULib.tsayColor(calling_player, false, Color(0, 192, 255), weapon_key)
-			end
+            local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
+            if (weapon_name ~= nil) then
+                ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
+            else
+                ULib.tsayColor(calling_player, false, Color(0, 192, 255), weapon_key)
+            end
         end
         return
     end
@@ -429,6 +431,19 @@ if SERVER then
         LoadoutMgr.getWeaponList()
     end
 
+    --- Let player know they have access to Loadout Manager
+    -- @param player Joining player
+    --
+    local function onPlayerJoin(player)
+        -- Check player has access to loadout, if not, return
+        if (not calling_player:query("ulx loadout", true)) then
+            return
+        end
+        -- Inform player that they can use loadout
+        ULib.tsayColor(player, false, Color(255, 0, 0), "== Loadout Manager ==\nThis server use TTT Loadout Manager. To get started, use !loadout. For help, use !loadout help.")
+    end
+
     hook.Add("TTTBeginRound", "LoadoutMgr_roundStart", onRoundStart)
     hook.Add("TTTPrepareRound", "LoadoutMgr_prepareRound", onPreparing)
+    hook.Add("PlayerInitialSpawn", "LoadoutMgr_playerJoin", onPlayerJoin)
 end
