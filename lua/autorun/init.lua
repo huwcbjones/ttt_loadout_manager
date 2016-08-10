@@ -5,6 +5,9 @@
 -- Date:   21/01/2016
 --
 
+AddCSLuaFile('ttt_loadout_manager/defines.lua')
+AddCSLuaFile('ttt_loadout_manager/loadout.lua')
+
 --- Loads default config
 --
 local function loadDefaultConfig()
