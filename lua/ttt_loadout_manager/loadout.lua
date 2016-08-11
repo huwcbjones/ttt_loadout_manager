@@ -160,10 +160,14 @@ LoadoutMgr.printLoadout = function(calling_player)
     primary = LoadoutMgr.convertWeaponToString(primary)
     secondary = LoadoutMgr.convertWeaponToString(secondary)
 
-    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Loadout Manager: ", Color(255, 192, 0), "Current Loadout", Color(255, 0 ,0), " ==")
-    ULib.tsayColor(calling_player, false, Color(0, 255, 255), "Primary: " .. primary)
-    ULib.tsayColor(calling_player, false, Color(0, 192, 255), "Secondary: " .. secondary)
-    ULib.tsayColor(calling_player, false, Color(0, 128, 255), "Override: " .. override_str)
+    ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Loadout Manager: ", Color(255, 192, 0), "Current Loadout", Color(255, 0, 0), " ==")
+    ULib.tsayColor(calling_player, false,
+        Color(0, 255, 255),
+        "Primary: " .. primary .. "\n",
+        Color(0, 192, 255),
+        "Secondary: " .. secondary .. "\n",
+        Color(0, 128, 255),
+        "Override: " .. override_str)
 end
 
 --- Prints the list of weapons
@@ -172,35 +176,50 @@ end
 --
 LoadoutMgr.printWeapons = function(calling_player, type)
     LoadoutMgr.getWeaponList()
+    local weapon_table, type_str
 
     if (type == "primary") then
-        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Primary Weapons ==")
-        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
-        for weapon_key, _ in pairs(LoadoutMgr.Weapons.Primary) do
-            local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
-            if (weapon_name ~= weapon_key) then
-                ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
-            else
-                ULib.tsayColor(calling_player, false, Color(0, 192, 255), weapon_key)
-            end
-        end
+        type_str = "Primary"
+        weapon_table = LoadoutMgr.Weapons.Primary
+    elseif (type == "secondary") then
+        type_str = "Secondary"
+        weapon_table = LoadoutMgr.Weapons.Secondary
+    else
+        ULib.tsayError(calling_player, "Please specify a weapon type (primary/secondary)")
         return
     end
 
-    if (type == "secondary") then
-        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Secondary Weapons ==")
-        ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
-        for weapon_key, _ in pairs(LoadoutMgr.Weapons.Secondary) do
-            local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
-            if (weapon_name ~= weapon_key) then
-                ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
-            else
-                ULib.tsayColor(calling_player, false, Color(0, 192, 255), weapon_key)
-            end
-        end
+    if (weapon_table == nil) then
         return
     end
-    ULib.tsayError(calling_player, "Please specify a weapon type (primary/secondary)")
+    local str = "\n\n== Loadout Manager: Available " .. type_str .. " weapons ==\n"
+    str = str .. string.format("Name%s ID\n", str.rep(" ", 36))
+    for weapon_key, _ in pairs(weapon_table) do
+        local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
+
+        local weapon_str = str.rep(" ", 41) .. weapon_key
+
+        if (weapon_name ~= nil) then
+            weapon_str = weapon_name .. str.rep(" ", 41 - weapon_name:len()) .. weapon_key
+        end
+
+        str = str .. weapon_str .. "\n"
+    end
+    ULib.tsayColor(calling_player, false,
+        Color(255, 0, 0),
+        "== Loadout Manager: ",
+        Color(255, 172, 0),
+        "Available " .. type_str .. " Weapons",
+        Color(255, 0, 0),
+        " ==\n",
+        Color(0, 192, 255),
+        "Weapons list has been printed to console, press ` to view. (Make sure console is enabled in settings).")
+
+    local lines = ULib.explode("\n", str)
+
+    for _, line in ipairs(lines) do
+        ULib.console(calling_ply, line)
+    end
 end
 
 --- Gets the list of weapons available
@@ -218,6 +237,26 @@ LoadoutMgr.getWeaponList = function()
             if (LoadoutMgr.checkSecondaryWeaponFilter(weapon.ClassName)) then
                 LoadoutMgr.Weapons.Secondary[weapon.ClassName] = weapon
             end
+        end
+    end
+
+    Msg("\n\n==Available Primary Weapons ==\n")
+    for wid, _ in pairs(LoadoutMgr.Weapons.Primary) do
+        local wname = LoadoutMgr.convertWeaponToString(wid)
+        if (wname == nil) then
+            print(wid)
+        else
+            print(wname .. ": " .. wid)
+        end
+    end
+
+    Msg("\n\n==Available Secondary Weapons ==\n")
+    for wid, _ in pairs(LoadoutMgr.Weapons.Secondary) do
+        local wname = LoadoutMgr.convertWeaponToString(wid)
+        if (wname == nil) then
+            print(wid)
+        else
+            print(wname .. ": " .. wid)
         end
     end
 end
@@ -246,8 +285,7 @@ LoadoutMgr.checkPrimaryWeaponFilter = function(weapon)
         isInList = isInList or (weapon == k)
     end
 
-    return
-    (isInList and LoadoutMgr.Weapons.Filter.Primary.Type == LoadoutMgr.FILTER_WHITELIST)
+    return (isInList and LoadoutMgr.Weapons.Filter.Primary.Type == LoadoutMgr.FILTER_WHITELIST)
             or (not isInList and LoadoutMgr.Weapons.Filter.Primary.Type == LoadoutMgr.FILTER_BLACKLIST)
 end
 
@@ -276,8 +314,7 @@ LoadoutMgr.checkSecondaryWeaponFilter = function(weapon)
         isInList = isInList or (weapon == k)
     end
 
-    return
-    (isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_WHITELIST)
+    return (isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_WHITELIST)
             or (not isInList and LoadoutMgr.Weapons.Filter.Secondary.Type == LoadoutMgr.FILTER_BLACKLIST)
 end
 
@@ -290,6 +327,7 @@ end
 
 --- Converts a weapon className to the name string
 -- @param weapon Weapon className
+-- @return Weapon name, or nil if weapon not found
 --
 LoadoutMgr.convertWeaponToString = function(weapon)
     local SWEP = weapons.Get(weapon)
@@ -408,6 +446,7 @@ if SERVER then
             end
             -- Check if player is in spectate mode
             if (player:GetObserverMode() ~= OBS_MODE_NONE) then
+                Msg("[LOADOUT MGR] Ignoring loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ") as they are in spectate mode!\n")
                 return
             end
             ULib.tsayColor(player, false, Color(255, 0, 0), "[LOADOUT MGR] Loading your loadout...")
