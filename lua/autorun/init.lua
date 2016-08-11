@@ -50,19 +50,25 @@ local function loadWeaponNameMap()
     end
 
     local map = file.Read("ttt_loadout_manager/weapon_map.txt", "DATA")
-    local table = util.JSONToTable(map)
-    if table ~= nil then
-        LoadoutMgr.Weapons.NameMap = table
+    local weapon_table = util.JSONToTable(map)
+
+    if weapon_table ~= nil then
+        LoadoutMgr.Weapons.NameMap = weapon_table
+        Msg("[LOADOUT MGR] Loaded weapon name map!\n")
+    else
+        Msg("[LOADOUT MGR] Failed to load weapon name map! Dumping weapon_map.txt:\n")
+        print(map)
     end
-    Msg("[LOADOUT MGR] Loaded weapon name map!\n")
 end
 
 if not LoadoutMgr then
     LoadoutMgr = {}
     include ( "ttt_loadout_manager/defines.lua" )
+    if SERVER then
     loadDefaultConfig()
     loadConfig()
     loadWeaponNameMap()
+    end
 
     include("ttt_loadout_manager/loadout.lua")
     Msg("[LOADOUT MGR] Loaded Loadout Manager\n")
