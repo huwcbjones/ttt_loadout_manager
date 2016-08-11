@@ -98,7 +98,7 @@ LoadoutMgr.manager = function(calling_player, arg2, arg3)
 
     -- Display weapons
     if (arg2 == "weapons") then
-        LoadoutMgr.printWeapons(calling_player, arg3)
+        LoadoutMgr.printWeapons(calling_player, arg3, true)
     end
 end
 
@@ -174,7 +174,7 @@ end
 -- @param calling_player
 -- @param type
 --
-LoadoutMgr.printWeapons = function(calling_player, type)
+LoadoutMgr.printWeapons = function(calling_player, type, printMessage)
     LoadoutMgr.getWeaponList()
     local weapon_table, type_str
 
@@ -185,14 +185,25 @@ LoadoutMgr.printWeapons = function(calling_player, type)
         type_str = "Secondary"
         weapon_table = LoadoutMgr.Weapons.Secondary
     else
-        ULib.tsayError(calling_player, "Please specify a weapon type (primary/secondary)")
+        print("printAllWeapons")
+        LoadoutMgr.printWeapons(calling_player, "primary", false)
+        LoadoutMgr.printWeapons(calling_player, "secondary", false)
+        ULib.tsayColor(calling_player, false,
+            Color(255, 0, 0),
+            "== Loadout Manager: ",
+            Color(255, 172, 0),
+            "Available Weapons",
+            Color(255, 0, 0),
+            " ==\n",
+            Color(0, 192, 255),
+            "Weapons list has been printed to console, press ` to view. (Make sure console is enabled in settings).")
         return
     end
 
     if (weapon_table == nil) then
         return
     end
-    local str = "\n\n== Loadout Manager: Available " .. type_str .. " weapons ==\n"
+    local str = "\n== Loadout Manager: Available " .. type_str .. " weapons ==\n"
     str = str .. string.format("Name%s ID\n", str.rep(" ", 36))
     for weapon_key, _ in pairs(weapon_table) do
         local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
@@ -205,15 +216,18 @@ LoadoutMgr.printWeapons = function(calling_player, type)
 
         str = str .. weapon_str .. "\n"
     end
-    ULib.tsayColor(calling_player, false,
-        Color(255, 0, 0),
-        "== Loadout Manager: ",
-        Color(255, 172, 0),
-        "Available " .. type_str .. " Weapons",
-        Color(255, 0, 0),
-        " ==\n",
-        Color(0, 192, 255),
-        "Weapons list has been printed to console, press ` to view. (Make sure console is enabled in settings).")
+
+    if (printMessage) then
+        ULib.tsayColor(calling_player, false,
+            Color(255, 0, 0),
+            "== Loadout Manager: ",
+            Color(255, 172, 0),
+            "Available " .. type_str .. " Weapons",
+            Color(255, 0, 0),
+            " ==\n",
+            Color(0, 192, 255),
+            "Weapons list has been printed to console, press ` to view. (Make sure console is enabled in settings).")
+    end
 
     local lines = ULib.explode("\n", str)
 
