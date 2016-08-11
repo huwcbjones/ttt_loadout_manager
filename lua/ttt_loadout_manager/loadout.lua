@@ -399,10 +399,10 @@ end
 --
 LoadoutMgr.getWeaponOverride = function(player)
     local override = player:GetPData("loadoutMgr_weapon_override", false)
-    if (override == "off" or override == nil) then
-        return false
-    else
+    if (override == "on") then
         return true
+    else
+        return false
     end
 end
 
