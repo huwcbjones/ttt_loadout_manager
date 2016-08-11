@@ -177,7 +177,12 @@ LoadoutMgr.printWeapons = function(calling_player, type)
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "== Available Primary Weapons ==")
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
         for weapon_key, _ in pairs(LoadoutMgr.Weapons.Primary) do
-            ULib.tsayColor(calling_player, false, Color(0, 255, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
+            local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
+            if (weapon_name ~= weapon_key) then
+                ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
+            else
+                ULib.tsayColor(calling_player, false, Color(0, 192, 255), weapon_key)
+            end
         end
         return
     end
@@ -187,7 +192,7 @@ LoadoutMgr.printWeapons = function(calling_player, type)
         ULib.tsayColor(calling_player, false, Color(255, 0, 0), "Name, ID")
         for weapon_key, _ in pairs(LoadoutMgr.Weapons.Secondary) do
             local weapon_name = LoadoutMgr.convertWeaponToString(weapon_key)
-            if (weapon_name ~= nil) then
+            if (weapon_name ~= weapon_key) then
                 ULib.tsayColor(calling_player, false, Color(0, 192, 255), LoadoutMgr.convertWeaponToString(weapon_key) .. ", " .. weapon_key)
             else
                 ULib.tsayColor(calling_player, false, Color(0, 192, 255), weapon_key)
