@@ -402,7 +402,12 @@ if SERVER then
     --
     local function onRoundStart()
         for _, player in pairs(player.GetAll()) do
+            -- Check if player has access
             if (not player:query("ulx loadout", true)) then
+                return
+            end
+            -- Check if player is in spectate mode
+            if (player:GetObserverMode() ~= OBS_MODE_NONE) then
                 return
             end
             ULib.tsayColor(player, false, Color(255, 0, 0), "[LOADOUT MGR] Loading your loadout...")
