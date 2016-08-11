@@ -436,7 +436,7 @@ if SERVER then
     --
     local function onPlayerJoin(player)
         -- Check player has access to loadout, if not, return
-        if (not calling_player:query("ulx loadout", true)) then
+        if (not player:query("ulx loadout", true)) then
             return
         end
         -- Inform player that they can use loadout
