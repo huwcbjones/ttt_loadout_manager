@@ -232,7 +232,7 @@ LoadoutMgr.printWeapons = function(calling_player, type, printMessage)
     local lines = ULib.explode("\n", str)
 
     for _, line in ipairs(lines) do
-        ULib.console(calling_ply, line)
+        ULib.console(calling_player, line)
     end
 end
 
