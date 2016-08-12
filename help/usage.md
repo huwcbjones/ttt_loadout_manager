@@ -81,7 +81,7 @@ For secondaries, swap primary for secondary.
 #### Examples ####
 Rifle as the primary weapon, type `!loadout weapon primary weapon_zm_rifle` into chat.
 
-Deagle as the secondary weapon, type `!loadout weapon primary weapon_zm_revolver` into chat.
+Deagle as the secondary weapon, type `!loadout weapon secondary weapon_zm_revolver` into chat.
 
 ### Override ###
 Now, you may be asking WTF is the override setting?
