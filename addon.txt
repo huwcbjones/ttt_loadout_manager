@@ -1,7 +1,7 @@
 "AddonInfo"
 {
         "name"              "TTT Loadout Manager"
-        "version"           "0.4b"
+        "version"           "0.5"
         "author_name"       "Huw Jones"
         "author_email"      "huwcbjones@tgmail.com"
         "info"              "A loadout manager for TTT (a Garry's Mod game mode)"
