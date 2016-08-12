@@ -48,7 +48,7 @@ For help, use !loadout help
 ### Help ###
 To get more help with using the loadout manager, type `!loadout help` into chat.
 
-As of [v0.4b](releases/v0.4b), you should see the following:
+As of [v0.4b](../../releases/v0.4b), you should see the following:
 ```
 == Loadout Manager Help: ==
 Available commands: reset, primary, secondary, help, override, weapons
