@@ -34,7 +34,7 @@ The following is a user manual for the TTT Loadout Manager Addon.
 
 ## Installation ##
 
-1. Download the [latest release](../..//releases/latest).
+1. Download the [latest release](../../../releases/latest).
 2. Upload/Unzip addon.
     * If your server supports unzipping:
         1. Upload the zip to `/addons`.
