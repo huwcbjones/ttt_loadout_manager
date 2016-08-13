@@ -454,41 +454,47 @@ if SERVER then
         end
     end
 
+    local function processPlayer(player)
+        -- Check if player has access
+        if (not player:query("ulx loadout", true)) then
+            return
+        end
+
+        -- Check if player is in spectate mode
+        if (player:GetObserverMode() ~= OBS_MODE_NONE) then
+            Msg("[LOADOUT MGR] Ignoring loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ") as they are in spectate mode!\n")
+            return
+        end
+
+        ULib.tsayColor(player, false, Color(255, 0, 0), "[LOADOUT MGR] Loading your loadout...")
+        LoadoutMgr.printLoadout(player)
+        Msg("[LOADOUT MGR] Loading loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ")!\n")
+
+        -- Load weapons
+        local wep_primary = LoadoutMgr.getWeaponPrimary(player)
+        local wep_secondary = LoadoutMgr.getWeaponSecondary(player)
+        local shouldOverride = LoadoutMgr.getWeaponOverride(player)
+
+        -- Check primary weapon against filter
+        if (wep_primary ~= nil) then
+            if LoadoutMgr.checkPrimaryWeapon(wep_primary) then
+                processEquipWeapon(player, LoadoutMgr.WEAPON_PRIMARY, shouldOverride, wep_primary)
+            end
+        end
+
+        -- Check secondary weapon against filter
+        if (wep_secondary ~= nil) then
+            if LoadoutMgr.checkSecondaryWeapon(wep_secondary) then
+                processEquipWeapon(player, LoadoutMgr.WEAPON_SECONDARY, shouldOverride, wep_secondary)
+            end
+        end
+    end
+
     --- Server hook for managing loadouts on round start
     --
     local function onRoundStart()
         for _, player in pairs(player.GetAll()) do
-            -- Check if player has access
-            if (not player:query("ulx loadout", true)) then
-                return
-            end
-            -- Check if player is in spectate mode
-            if (player:GetObserverMode() ~= OBS_MODE_NONE) then
-                Msg("[LOADOUT MGR] Ignoring loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ") as they are in spectate mode!\n")
-                return
-            end
-            ULib.tsayColor(player, false, Color(255, 0, 0), "[LOADOUT MGR] Loading your loadout...")
-            LoadoutMgr.printLoadout(player)
-            Msg("[LOADOUT MGR] Loading loadout for " .. player:Nick() .. "(" .. player:SteamID() .. ")!\n")
-
-            -- Load weapons
-            local wep_primary = LoadoutMgr.getWeaponPrimary(player)
-            local wep_secondary = LoadoutMgr.getWeaponSecondary(player)
-            local shouldOverride = LoadoutMgr.getWeaponOverride(player)
-
-            -- Check primary weapon against filter
-            if (wep_primary ~= nil) then
-                if LoadoutMgr.checkPrimaryWeapon(wep_primary) then
-                    processEquipWeapon(player, LoadoutMgr.WEAPON_PRIMARY, shouldOverride, wep_primary)
-                end
-            end
-
-            -- Check secondary weapon against filter
-            if (wep_secondary ~= nil) then
-                if LoadoutMgr.checkSecondaryWeapon(wep_secondary) then
-                    processEquipWeapon(player, LoadoutMgr.WEAPON_SECONDARY, shouldOverride, wep_secondary)
-                end
-            end
+            processPlayer(player)
         end
     end
 
@@ -508,6 +514,15 @@ if SERVER then
         end
         -- Inform player that they can use loadout
         ULib.tsayColor(player, false, Color(255, 0, 0), "== Loadout Manager ==\nThis server use TTT Loadout Manager. To get started, use !loadout. For help, use !loadout help.")
+        if (LoadoutMgr.Version.NewVersionAvailable) then
+            ULib.tsayColor(player, false,
+                Color(255, 0, 0), "== Loadout Manager: ",
+                Color(255, 192, 0), "NEW VERSION!",
+                Color(255, 0, 0), " ==\nThere is a new version of Loadout Manager (" ..
+                LoadoutMgr.Version.Latest ..
+                ") available, get your server admin to update!"
+            )
+        end
     end
 
     hook.Add("TTTBeginRound", "LoadoutMgr_roundStart", onRoundStart)
