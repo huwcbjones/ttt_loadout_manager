@@ -14,7 +14,7 @@ loadout:addParam { type = ULib.cmds.StringArg, hint = "Argument", ULib.cmds.opti
 loadout:help("Manages the player's loadout.")
 
 function ulx.loadouthelp(calling_ply)
-    calling_ply:SendLua('gui.OpenURL("https://github.com/huwcbjones/ttt_loadout_manager/blob/help/help/index.md")')
+    calling_ply:SendLua('gui.OpenURL("https://github.com/huwcbjones/ttt_loadout_manager/blob/master/help/index.md")')
 end
 
 local loadouthelp = ulx.command(CATAGORY_NAME, "ulx loadouthelp", ulx.loadouthelp, "!loadouthelp", true)
