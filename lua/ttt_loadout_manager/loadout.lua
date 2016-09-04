@@ -143,8 +143,8 @@ LoadoutMgr.displayHelp = function(calling_player, command)
     ULib.tsayColor(calling_player, false,
         Color(0, 192, 255),
         "Available commands: " .. cmds,
-        Color(255, 0, 0),
-        "For help with a command, use !loadout help [command].\n",
+        Color(0, 128, 255),
+        "\nFor help with a command, use !loadout help [command].\n",
         "For more comprehensive help, use !loadouthelp to open the web help.")
 end
 
