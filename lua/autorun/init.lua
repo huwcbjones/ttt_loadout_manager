@@ -7,7 +7,10 @@
 
 AddCSLuaFile('ttt_loadout_manager/defines.lua')
 AddCSLuaFile('ttt_loadout_manager/loadout.lua')
-
+local function round(number, dp)
+    local shift = 10 ^ dp
+    return math.floor(number * shift + 0.5) / shift
+end
 --- Checks if there is a new version
 local function versionCheck()
     -- Get current version of addon
@@ -18,7 +21,7 @@ local function versionCheck()
         if (addon_txt == nil) then return end
         local addon_details = util.KeyValuesToTable(addon_txt)
 
-        LoadoutMgr.Version.Current = addon_details.version
+        LoadoutMgr.Version.Current = round(addon_details.version, 1)
     end
 
     -- Get latest version of addon
@@ -27,7 +30,7 @@ local function versionCheck()
             local addon_txt = body
             if (addon_txt ~= nil) then
                 local addon_details = util.KeyValuesToTable(addon_txt)
-                LoadoutMgr.Version.Latest = addon_details.version
+                LoadoutMgr.Version.Latest = round(addon_details.version, 1)
                 LoadoutMgr.Version.NewVersionAvailable = LoadoutMgr.Version.Current ~= LoadoutMgr.Version.Latest
             end
             Msg("[LOADOUT MGR] Running " .. LoadoutMgr.Version.Current .. " (latest: " .. LoadoutMgr.Version.Latest .. "\n")
