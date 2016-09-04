@@ -432,12 +432,13 @@ if SERVER then
 
         -- Loop through player's weapons
         local activeSlot = player:GetActiveWeapon().Kind
+        local activeWeapon = player:GetActiveWeapon()
 
         for _, weapon in pairs(playerWeapons) do
             -- If the player's weapon is in the slot we are looking at, handle accordingly
             if weapon.Kind == type then
-                Msg(weapon.ClassName)
                 if shouldOverride then
+                    activeWeapon:PreDrop() -- Fix for scope bug
                     player:StripWeapon(weapon.ClassName)
                 else
                     -- We don't want to override the existing weapon
@@ -513,15 +514,19 @@ if SERVER then
             return
         end
         -- Inform player that they can use loadout
-        ULib.tsayColor(player, false, Color(255, 0, 0), "== Loadout Manager ==\nThis server use TTT Loadout Manager. To get started, use !loadout. For help, use !loadout help.")
+        ULib.tsayColor(player, false,
+            Color(255, 0, 0), "== Loadout Manager:",
+            Color(255, 172, 0), " Available",
+            Color(255, 0, 0), "==\n",
+            Color(0, 192, 255), "This server use TTT Loadout Manager. To get started, use !loadout. For help, use !loadout help.")
         if (LoadoutMgr.Version.NewVersionAvailable) then
             ULib.tsayColor(player, false,
                 Color(255, 0, 0), "== Loadout Manager: ",
                 Color(255, 192, 0), "NEW VERSION!",
-                Color(255, 0, 0), " ==\nThere is a new version of Loadout Manager (" ..
-                LoadoutMgr.Version.Latest ..
-                ") available, get your server admin to update!"
-            )
+                Color(255, 0, 0), "==\n",
+                Color(0, 192, 255), "There is a new version of Loadout Manager (" ..
+                        LoadoutMgr.Version.Latest ..
+                        ") available, get your server admin to update!")
         end
     end
 
